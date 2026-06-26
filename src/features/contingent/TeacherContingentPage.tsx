@@ -31,6 +31,7 @@ import {
   Users,
   X,
 } from "lucide-react"
+import { PageHeader } from "@/components/shared/PageHeader"
 import {
   mockClass,
   mockStudents,
@@ -55,25 +56,23 @@ export function TeacherContingentPage() {
   return (
     <div className="space-y-5">
       {/* Заголовок */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold">Контингент</h1>
-          <Badge variant="secondary" className="text-base px-3 py-1">
-            {mockClass.display_name}
-          </Badge>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <UserPlus className="size-4" /> Установить учителя
-          </Button>
-          <Button variant="outline">
-            <Download className="size-4" /> Экспорт
-          </Button>
-          <Button>
-            <UserPlus className="size-4" /> Создать учащегося
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Контингент"
+        badge={mockClass.display_name}
+        actions={
+          <>
+            <Button variant="outline">
+              <UserPlus className="size-4" /> Установить учителя
+            </Button>
+            <Button variant="outline">
+              <Download className="size-4" /> Экспорт
+            </Button>
+            <Button>
+              <UserPlus className="size-4" /> Создать учащегося
+            </Button>
+          </>
+        }
+      />
 
       {/* Плашка проверки */}
       {showBanner && notLoggedCount > 0 && (
