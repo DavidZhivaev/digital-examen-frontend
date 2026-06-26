@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AppLayout } from "@/components/layout/AppLayout"
-import { LandingPage } from "@/pages/LandingPage"
-import { LoginPage } from "@/pages/LoginPage"
-import { PlaceholderPage } from "@/pages/PlaceholderPage"
-import { SettingsPage } from "@/pages/SettingsPage"
-import { TeacherContingentPage } from "@/pages/teacher/TeacherContingentPage"
-import { TeacherSeatingPage } from "@/pages/teacher/TeacherSeatingPage"
+import { LandingPage } from "@/features/landing/LandingPage"
+import { LoginPage } from "@/features/auth/LoginPage"
+import { PlaceholderPage } from "@/components/shared/PlaceholderPage"
+import { SettingsPage } from "@/features/settings/SettingsPage"
+import { TeacherContingentPage } from "@/features/contingent/TeacherContingentPage"
+import { TeacherSeatingPage } from "@/features/seating/TeacherSeatingPage"
 
 function App() {
   return (

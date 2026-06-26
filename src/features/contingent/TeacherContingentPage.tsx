@@ -37,7 +37,7 @@ import {
   fioOf,
   roleNameByNum,
   type Student,
-} from "@/lib/mockContingent"
+} from "./mocks"
 
 export function TeacherContingentPage() {
   const [selected, setSelected] = useState<Student | null>(null)

@@ -23,7 +23,7 @@ import {
   avgOf,
   type SeatStudent,
   type SeatRoom,
-} from "@/lib/mockSeating"
+} from "./mocks"
 
 type CheckState = "idle" | "ok" | "error"
 type Placement = Record<number, (SeatStudent | null)[]>
