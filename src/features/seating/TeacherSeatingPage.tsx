@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/shared/PageHeader"
 import {
   CheckCircle2,
   Download,
@@ -137,7 +138,7 @@ export function TeacherSeatingPage() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="text-2xl font-bold">Рассадка</h1>
+      <PageHeader title="Рассадка" />
 
       {/* Участники */}
       <Card>

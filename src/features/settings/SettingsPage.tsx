@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { CheckCircle2, KeyRound, LogOut, Mail, ShieldAlert } from "lucide-react"
+import { PageHeader } from "@/components/shared/PageHeader"
 import { getCurrentUser, getRoleName, logout } from "@/lib/mockAuth"
 
 export function SettingsPage() {
@@ -56,7 +57,7 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-5 max-w-3xl">
-      <h1 className="text-2xl font-bold">Настройки аккаунта</h1>
+      <PageHeader title="Настройки аккаунта" />
 
       {/* Профиль */}
       <Card>
