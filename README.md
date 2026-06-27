@@ -31,24 +31,29 @@ npm run build
 
 ```
 src/
+├── features/        — подсистемы (каждый фронт владеет своими)
+│   ├── works/       Работы · bank/ Банк задач · processing/ Обработка ЭМ
+│   ├── contingent/  Контингент · classrooms/ Аудитории
+│   ├── seating/     Рассадка · settings/ Настройки
+│   ├── landing/     публичная страница · auth/ вход
 ├── components/
 │   ├── layout/      — общий каркас (шапка, layout)
-│   ├── shared/      — переиспользуемые компоненты (таблицы, поиск и т.д.)
+│   ├── shared/      — общие компоненты (PageHeader, состояния и т.д.)
 │   └── ui/          — компоненты shadcn/ui (не редактировать вручную)
-├── pages/           — страницы по ролям и подсистемам
-│   └── teacher/     — пример: страницы кабинета учителя
-├── lib/             — утилиты и моковые данные (mock*.ts)
+├── lib/             — утилиты, общий мок авторизации
 └── App.tsx          — корневой роутер
 ```
+
+Подробно про структуру и рабочий процесс — в [FRONTEND_GUIDE.md](./FRONTEND_GUIDE.md).
 
 ## Что уже готово (опираться как на образец)
 
 - **Каркас**: layout, шапка с навигацией, роутинг, ролевая модель, моковый вход
 - **Эталонные экраны** (примеры как делать):
-  - Контингент учителя — таблица + карточка (`pages/teacher/TeacherContingentPage.tsx`)
-  - Рассадка — интерактивный флоу + визуальная схема (`pages/teacher/TeacherSeatingPage.tsx`)
-  - Настройки — форма + адаптив (`pages/SettingsPage.tsx`)
-- **Лендинг** — публичная страница (`pages/LandingPage.tsx`)
+  - Контингент учителя — таблица + карточка (`features/contingent/TeacherContingentPage.tsx`)
+  - Рассадка — интерактивный флоу + визуальная схема (`features/seating/TeacherSeatingPage.tsx`)
+  - Настройки — форма + адаптив (`features/settings/SettingsPage.tsx`)
+- **Лендинг** — публичная страница (`features/landing/LandingPage.tsx`)
 
 Остальные экраны — заглушки (`PlaceholderPage`), их предстоит реализовать.
 
