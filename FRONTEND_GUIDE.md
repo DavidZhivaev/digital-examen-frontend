@@ -23,6 +23,7 @@
 - React Router — маршрутизация
 
 Понадобятся (ставить по мере необходимости, согласовав с лидом):
+- axios — HTTP-клиент (общий api-client с авторизацией, см. docs/tz-auth.md)
 - TanStack Query — запросы к API
 - react-hook-form + zod — формы и валидация
 - react-katex — рендер LaTeX (банк задач)
