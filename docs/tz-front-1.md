@@ -66,8 +66,8 @@
 
 - **Маршрут:** `/student/works`
 - **API:** `GET /api/works/` — ученику плоский список (отсортирован по дате).
-  Поля: `id, title, subject_name, scheduled_at, task_count, corpus, room,
-  seat, work_number`.
+  Поля: `id, title, subject_name, scheduled_at, task_count, participants_count,
+  corpus, room, seat, work_number`.
 - **Что показываем:** карточки (название, предмет, дата, корпус, аудитория).
 - **Действия:** клик → 3.2.
 - **Состояния:** загрузка (скелетон) / пусто / ошибка.
@@ -79,8 +79,9 @@
 
 - **Маршрут:** `/student/works/:workId`
 - **API:** `GET /api/works/{work_id}` — «студенческая» карточка (наблюдатель
-  и задания НЕ приходят): `id, title, subject_name, scheduled_at, corpus,
-  room, seat, work_number, scores {points, percent, grade}, scans[]`.
+  и задания НЕ приходят): `id, title, subject_id, subject_name, scheduled_at,
+  corpus, room, seat, work_number, participant_code, variant_number,
+  scores {points, clean_pluses, percent, grade}, scans[]`.
   Скан-файл: `GET /api/files/work/{work_id}/scan/{scan_id}`.
 - **Что показываем** (3 блока):
   - Основное: название, предмет, дата, корпус, аудитория, место.
@@ -124,7 +125,10 @@
 - **Маршрут:** `/operator/works/new`
 - **API:** `POST /api/works/` (WorkCreate): `title, subject_id, student_ids[],
   room_ids[], scheduled_at, observer_ids[]?, task_bank_id?, task_count?,
-  test_config_key?, send_notifications (bool), grading_scale[]`.
+  written_task_count?, variant_count?, test_config_key?,
+  send_notifications (bool), grading_scale[]`.
+  `grading_scale` — массив правил: `{grade (2–5), min_points,
+  min_clean_pluses?}`.
   Справочники: `GET /api/subjects/`, `/api/classrooms/all`, `/api/tasks/banks`,
   `/api/works/test-configs`.
 - **Что показываем:** форма создания.
@@ -142,22 +146,32 @@
 
 - **Маршрут:** `/operator/works/:workId`
 - **API просмотр:** `GET /api/works/{work_id}` — полная карточка: `title,
-  subject_name, scheduled_at, task_count, grading_scale, send_notifications,
-  creator_id, classes[], rooms[]` (с наблюдателем), `participants[]` (email,
-  место, баллы), `scans[]`.
+  subject_id, subject_name, scheduled_at, task_count, task_bank_id,
+  test_config_key, grading_scale, send_notifications, creator_id,
+  classes[]` (`{class_id, display_name}`), `rooms[]` (`{room_id, corpus,
+  number, capacity, observer}`), `participants[]`, `scans[]`.
+  Участник (`participants[]`): `student_id, person_id, fio, class_id,
+  class_name, room_id, seat, work_number, participant_code, variant_number,
+  points, clean_pluses, percent, grade, email`.
 - **Действия:**
   - Редактировать: `PATCH /api/works/{work_id}` (WorkUpdate). Менять можно:
-    `title, scheduled_at, test_config_key, task_count` (без банка),
-    `student_ids, room_ids`. Остальное (предмет, наблюдатели, банк,
-    уведомления) — disabled. Правка участников/аудиторий пересобирает
+    `title, scheduled_at, test_config_key, task_count, written_task_count`
+    (без банка), `student_ids, room_ids`. Остальное (предмет, наблюдатели,
+    банк, уведомления) — disabled. Правка участников/аудиторий пересобирает
     рассадку БЕЗ рассылки.
+  - Добавить одного участника: `POST .../participants`
+    (`{student_id, room_id?}`).
+  - Пересоздать варианты заданий: `POST .../variants/regenerate`
+    (`{variant_count?}`).
   - Скачать рассадку: `GET .../seating/download` и
     `.../download?sorted_view=true`.
   - Пересоздать рассадку: `POST .../seating/regenerate` (`{student_ids[],
     room_ids[]}`) — без рассылки (показать «уведомления не отправляются»).
   - Зайти в участника: `GET .../student/{student_id}`.
-  - Оценки: `POST .../scores` (`{items:[{student_id, points}]}`; `points` =
-    `{"позиция": баллы}`). Процент и оценку считает бэк.
+  - Оценки: `POST .../scores` (`{items:[{<идентификатор>, points}]}`).
+    Идентификатор участника — один из: `student_id` ИЛИ `work_number` ИЛИ
+    `participant_code` ИЛИ `blank_code`. `points` = `{позиция (id): балл}`.
+    Процент и оценку считает бэк.
 - **Что показываем:** классы, участники, аудитории + кнопки.
 - **Состояния:** загрузка / ошибка / 403.
 - **Адаптив:** блоки вертикально, таблица скроллится.
@@ -167,8 +181,9 @@
 
 - **Маршрут:** `/operator/works/:workId/variants`
 - **API:**
-  - Печать вариантов: `POST .../variants/print` (`{student_id}` ИЛИ
-    `{room_id}`; нельзя на корпус). Бэк может вернуть warning «рано печатать».
+  - Печать вариантов: `POST .../variants/print` — ровно одно из:
+    `{student_id}` ИЛИ `{student_ids[]}` ИЛИ `{room_id}` (нельзя на корпус).
+    Бэк может вернуть warning «рано печатать».
   - Печать ответов: `POST .../variants/answers` (`{copies}`). Только если у
     работы есть банк задач.
   - (Задания берутся из банка на бэке; фронт — кнопка + окно печати.)

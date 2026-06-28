@@ -83,6 +83,8 @@
 - **Маршрут:** `/<роль>/bank/:bankId`
 - **API:** `GET /api/tasks/banks/{bank_id}?page=&limit=10&q=&position_order=&status=`
   Ответ: банк + `mode` + `tasks` (пагинация) + `positions`.
+  Поиск задач внутри одной позиции (для фильтра/подгрузки):
+  `GET /api/tasks/banks/{bank_id}/positions/{position_order}/tasks?q=&page=&limit=10`.
   - Задача: `id, code, position_id, position_order, text` (LaTeX), `image_*`;
     + (если разрешено) `solution, answer, author_id`; + (`normal`) `status,
     version, latest_review_comment`.
@@ -108,6 +110,9 @@
 - **Что показываем** (вид): форма — `text` (LaTeX), `solution`, `answer`,
   картинка; место под превью. Кнопки есть, но к июлю не подключены.
 - **Образец:** форма `features/settings/SettingsPage.tsx`.
+- На осень (когда подключим `POST /api/tasks/tasks`): `text` и `answer`
+  обязательны, `image_position` — только `right` или `bottom`, LaTeX бэк
+  валидирует.
 
 ### Мои предложения / Модерация / История версий / Управление банком / Оцифровка — `[ОСЕНЬ]`
 
