@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -52,7 +52,19 @@ export function TeacherContingentPage() {
     if (tab === "g2") return s.group === 2
     return true
   })
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
+  // Сброс страницы при смене таба
+  useEffect(() => {
+  setCurrentPage(1);
+  }, [tab]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedData = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
   return (
     <div className="space-y-5">
       {/* Заголовок */}
@@ -130,7 +142,7 @@ export function TeacherContingentPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((s) => (
+                {paginatedData.map((s) => (
                   <TableRow
                     key={s.id}
                     className="cursor-pointer"
@@ -158,6 +170,44 @@ export function TeacherContingentPage() {
               </TableBody>
             </Table>
           </div>
+          {totalPages > 1 && (
+  <div className="flex items-center justify-between px-4 py-3 mt-4">
+    <div className="text-sm text-muted-foreground">
+      Показано {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
+      {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} из{" "}
+      {filtered.length}
+    </div>
+    <div className="flex items-center gap-1">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+        disabled={currentPage === 1}
+      >
+        Назад
+      </Button>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <Button
+          key={page}
+          variant={page === currentPage ? "default" : "outline"}
+          size="sm"
+          onClick={() => setCurrentPage(page)}
+          className="min-w-9"
+        >
+          {page}
+        </Button>
+      ))}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+        disabled={currentPage === totalPages}
+      >
+        Вперед
+      </Button>
+    </div>
+  </div>
+)}
         </TabsContent>
       </Tabs>
 
