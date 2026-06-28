@@ -12,7 +12,7 @@ import {
   Settings,
   Users,
 } from "lucide-react"
-import type { Role } from "@/lib/mockAuth"
+import type { Role } from "@/lib/apiAuth"
 
 type NavItem = {
   to: string

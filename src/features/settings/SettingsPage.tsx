@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select"
 import { CheckCircle2, KeyRound, LogOut, Mail, ShieldAlert } from "lucide-react"
 import { PageHeader } from "@/components/shared/PageHeader"
-import { getCurrentUser, getRoleName, logout } from "@/lib/mockAuth"
+import { getCurrentUser, getRoleName, logout } from "@/lib/apiAuth"
 
 export function SettingsPage() {
   const user = getCurrentUser()
