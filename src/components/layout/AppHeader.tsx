@@ -4,17 +4,16 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Check, ChevronDown, LogOut, Settings } from "lucide-react"
+import { ChevronDown, LogOut, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   getCurrentUser,
   getInitials,
   getRoleName,
-  login,
+  // login,
   logout,
   type Role,
 } from "@/lib/mockAuth"
@@ -50,7 +49,7 @@ const navByRole: Record<Role, { to: string; label: string }[]> = {
   ],
 }
 
-const allRoles: Role[] = ["student", "teacher", "operator", "admin"]
+// const allRoles: Role[] = ["student", "teacher", "operator", "admin"]
 
 export function AppHeader() {
   const user = getCurrentUser()
@@ -66,10 +65,10 @@ export function AppHeader() {
     navigate("/login")
   }
 
-  function switchRole(role: Role) {
-    login(role)
-    navigate(`/${role}`)
-  }
+  // function switchRole(role: Role) {
+  //   login(role)
+  //   navigate(`/${role}`)
+  // }
 
   return (
     <header className="h-16 border-b bg-white flex items-center px-6 gap-6">
@@ -78,7 +77,6 @@ export function AppHeader() {
         <div className="size-9 rounded-lg bg-primary grid place-items-center text-primary-foreground font-bold">
           ДЭ
         </div>
-        <span className="font-semibold text-lg">Название</span>
       </Link>
 
       {/* Навигация */}
@@ -103,58 +101,47 @@ export function AppHeader() {
 
       {/* Поле пользователя */}
       <div className="shrink-0">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 hover:bg-muted transition-colors">
-              <Avatar className="size-7">
-                <AvatarFallback className="bg-orange-400 text-white text-xs">
-                  {getInitials(user)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-left leading-tight">
-                <div className="text-sm font-medium">{shortName}</div>
-                <div className="text-xs text-primary">{getRoleName(user.role)}</div>
-              </div>
-              <ChevronDown className="size-4 text-muted-foreground" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64">
-            <DropdownMenuLabel>
-              <div className="font-semibold">
-                {user.lastName} {user.firstName} {user.middleName}
-              </div>
-              <div className="text-xs text-primary font-normal mt-0.5">
-                {getRoleName(user.role)}
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate(`/${user.role}/settings`)}>
-              <Settings className="mr-2 size-4" />
-              Настройки аккаунта
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
-              Сменить роль (для разработки)
-            </DropdownMenuLabel>
-            {allRoles.map((role) => (
-              <DropdownMenuItem key={role} onClick={() => switchRole(role)}>
-                <Check
-                  className={cn(
-                    "mr-2 size-4",
-                    user.role === role ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {getRoleName(role)}
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 size-4" />
-              Выход
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <button className="flex items-center gap-2 rounded-xl border bg-card px-3 py-1.5 hover:bg-muted transition-colors">
+        <Avatar className="size-7">
+          <AvatarFallback className="bg-orange-400 text-white text-xs">
+            {getInitials(user)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="text-left leading-tight">
+          <div className="text-sm font-medium">{shortName}</div>
+          <div className="text-xs text-primary">{getRoleName(user.role)}</div>
+        </div>
+        <ChevronDown className="size-4 text-muted-foreground" />
+      </button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" className="w-64 p-2">
+      <div className="flex flex-col items-center py-3 px-2">
+        <Avatar className="size-16 mb-3">
+          <AvatarFallback className="bg-orange-400 text-white text-lg font-semibold">
+            {getInitials(user)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="font-semibold text-center text-base leading-tight mb-1">
+          {user.lastName} {user.firstName} <br /> {user.middleName}
+        </div>
+        <div className="flex items-center gap-1.5 bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-medium mt-1">
+          {getRoleName(user.role)}
+        </div>
       </div>
+      <DropdownMenuSeparator className="my-2" />
+      <DropdownMenuItem onClick={() => navigate(`/${user.role}/settings`)} className="cursor-pointer">
+        <Settings className="mr-2 size-4 text-muted-foreground" />
+        Настройки аккаунта
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+        <LogOut className="mr-2 size-4 text-muted-foreground" />
+        Выход
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</div>
     </header>
   )
 }
