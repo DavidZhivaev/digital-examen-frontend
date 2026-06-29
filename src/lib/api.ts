@@ -1,28 +1,39 @@
-import axios from "axios";
-import { ACCESS_TOKEN } from "@/lib/constants";
+import axios from "axios"
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/lib/constants"
 
 const api = axios.create({
-  baseURL: "http://188.126.63.242:1580",
-});
+  baseURL: "/",
+})
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    console.log("🔑 Token from storage:", token ? "EXISTS" : "NOT FOUND");
-    console.log("📤 Request to:", config.url);
-    
+    const token = localStorage.getItem(ACCESS_TOKEN)
+
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log("✅ Authorization header set");
-    } else {
-      console.warn("⚠️ NO TOKEN - request will fail!");
+      config.headers.Authorization = `Bearer ${token}`
     }
-    
-    return config;
+    return config
   },
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
-export default api;
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status
+
+    if (status === 401) {
+      localStorage.removeItem(ACCESS_TOKEN)
+      localStorage.removeItem(REFRESH_TOKEN)
+      localStorage.removeItem("current-user")
+
+      window.location.href = "/login"
+    }
+  
+    return Promise.reject(error)
+  }
+)
+
+export default api

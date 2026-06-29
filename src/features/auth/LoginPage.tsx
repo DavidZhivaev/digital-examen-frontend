@@ -7,32 +7,15 @@ import { Label } from "@/components/ui/label"
 import { LoadingState } from "@/components/shared/states"
 import api from "@/lib/api"
 import {
+  fetchCurrentUser,
+} from "@/lib/apiAuth"
+import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-
-// Маппинг числовых ролей из JWT → строковые роли
-const ROLE_MAP: Record<number, string> = {
-  1: "student",
-  2: "teacher",
-  3: "operator",
-  4: "admin",
-}
-
-const USER_STORAGE_KEY = "current-user"
-
-function decodeJwtPayload(token: string): any {
-  try {
-    const payload = token.split(".")[1]
-    const decoded = atob(payload)
-    return JSON.parse(decoded)
-  } catch {
-    return null
-  }
-}
 
 export function LoginPage() {
   const [login, setLogin] = useState("")
@@ -62,51 +45,19 @@ export function LoginPage() {
       localStorage.setItem(ACCESS_TOKEN, accessToken)
       localStorage.setItem(REFRESH_TOKEN, refreshToken)
 
-      // 2. Декодируем JWT, чтобы узнать роль
-      const payload = decodeJwtPayload(accessToken)
-      const roleNumber = payload?.role
-      const userRole = ROLE_MAP[roleNumber] || "student"
+      // 2. Загружаем профиль пользователя (переиспользуем логику из apiAuth)
+      const user = await fetchCurrentUser()
 
-      // 3. ⚠️ ГЛАВНОЕ: Запрашиваем реальные данные пользователя
-      let userObject = null
-      try {
-        // Попробуй эндпоинт /api/auth/me/ или /api/users/me/
-        const profileRes = await api.get("/api/users/me")
-        const profileData = profileRes.data
-        
-        // Маппинг полей (адаптируй под реальный ответ бэка)
-        userObject = {
-          id: profileData.id || payload?.sub,
-          role: userRole,
-          firstName: profileData.first_name || profileData.firstName || "Имя",
-          lastName: profileData.last_name || profileData.lastName || "Фамилия",
-          middleName: profileData.middle_name || profileData.middleName || "Отчество",
-          organization: profileData.organization?.name || profileData.organization || "Организация"
-        }
-        
-        console.log("✅ Профиль загружен:", userObject)
-      } catch (profileError) {
-        console.warn("⚠️ Не удалось загрузить профиль, используем заглушку:", profileError)
-        // Временная заглушка, если эндпоинт /me не работает
-        userObject = {
-          id: payload?.sub || payload?.person_id,
-          role: userRole,
-          firstName: "Иван",
-          lastName: "Иванов",
-          middleName: "Иванович",
-          organization: "Школа 1580"
-        }
+      if (!user) {
+        localStorage.removeItem(ACCESS_TOKEN)
+        localStorage.removeItem(REFRESH_TOKEN)
+        setError("Не удалось загрузить данные профиля. Попробуйте позже.")
+        setLoading(false)
+        return
       }
 
-      // 4. Сохраняем объект пользователя
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userObject))
-
-      console.log("✅ Логин успешен. Роль:", userRole)
-
-      // 5. Переходим на страницу роли
-      navigate(`/${userRole}`, { replace: true })
+      navigate(`/${user.role}`, { replace: true })
     } catch (error: any) {
-      console.error("❌ Ошибка логина:", error)
       setError(error.response?.data?.detail || "Неправильный логин или пароль")
     } finally {
       setLoading(false)

@@ -35,7 +35,6 @@ export function getCurrentUser(): CurrentUser | null {
  */
 export async function fetchCurrentUser(): Promise<CurrentUser | null> {
   try {
-    // TODO: уточнить у лида точный URL эндпоинта (обычно /api/auth/me/ или /api/users/me/)
     const res = await api.get("/api/users/me")
     const user = mapApiUser(res.data)
     localStorage.setItem(USER_KEY, JSON.stringify(user))
@@ -72,7 +71,7 @@ export async function logout(): Promise<void> {
 
 /** Проверяет, авторизован ли пользователь (есть ли токен + кэш). */
 export function isAuthenticated(): boolean {
-  return !!localStorage.getItem("access_token") && !!getCurrentUser()
+  return !!localStorage.getItem("access") && !!getCurrentUser()
 }
 
 export function getRoleName(role: Role): string {
