@@ -1,8 +1,14 @@
 import { useState } from "react"
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/lib/constants"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { LoadingState } from "@/components/shared/states"
+import api from "@/lib/api"
+import {
+  fetchCurrentUser,
+} from "@/lib/apiAuth"
 import {
   Card,
   CardContent,
@@ -10,23 +16,62 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { login, type Role } from "@/lib/mockAuth"
 
 export function LoginPage() {
-  const [role, setRole] = useState<Role>("teacher")
+  const [login, setLogin] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    login(role)
-    navigate(`/${role}`)
+    setError(null)
+    setLoading(true)
+
+    try {
+      const res = await api.post("/api/auth/login", { login, password })
+
+      const accessToken = res.data.access_token
+      const refreshToken = res.data.refresh_token
+
+      if (!accessToken) {
+        setError("Сервер не вернул токен доступа")
+        setLoading(false)
+        return
+      }
+
+      // 1. Сохраняем токены
+      localStorage.setItem(ACCESS_TOKEN, accessToken)
+      localStorage.setItem(REFRESH_TOKEN, refreshToken)
+
+      // 2. Загружаем профиль пользователя (переиспользуем логику из apiAuth)
+      const user = await fetchCurrentUser()
+
+      if (!user) {
+        localStorage.removeItem(ACCESS_TOKEN)
+        localStorage.removeItem(REFRESH_TOKEN)
+        setError("Не удалось загрузить данные профиля. Попробуйте позже.")
+        setLoading(false)
+        return
+      }
+
+      navigate(`/${user.role}`, { replace: true })
+    } catch (error: any) {
+      setError(error.response?.data?.detail || "Неправильный логин или пароль")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen grid place-items-center bg-slate-50 p-4">
+        <div className="w-full max-w-md">
+          <LoadingState rows={3} />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -44,12 +89,13 @@ export function LoginPage() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Логин</Label>
+              <Label htmlFor="login">Логин</Label>
               <Input
-                id="email"
+                id="login"
                 type="text"
                 placeholder="user@school1580.ru"
-                defaultValue="user@school1580.ru"
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -57,31 +103,17 @@ export function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
-                defaultValue="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Войти как (для прототипа)</Label>
-              <Select value={role} onValueChange={(v) => setRole(v as Role)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="student">Ученик</SelectItem>
-                  <SelectItem value="teacher">Учитель</SelectItem>
-                  <SelectItem value="operator">Оператор</SelectItem>
-                  <SelectItem value="admin">Администратор</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit" className="w-full">
-              Войти
+            {error && (
+              <p className="text-sm text-red-600 text-center">{error}</p>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Вход..." : "Войти"}
             </Button>
           </form>
-          <p className="text-xs text-muted-foreground text-center mt-4">
-            Прототип. Селектор роли — временно, для демонстрации
-          </p>
         </CardContent>
       </Card>
     </div>

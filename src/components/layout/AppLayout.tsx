@@ -1,12 +1,14 @@
-import { Outlet, Navigate } from "react-router-dom"
+import { Outlet, Navigate, useLocation } from "react-router-dom"
 import { AppHeader } from "./AppHeader"
-import { getCurrentUser } from "@/lib/mockAuth"
+import { getCurrentUser } from "@/lib/apiAuth"
 
 export function AppLayout() {
   const user = getCurrentUser()
+  const location = useLocation()
 
-  if (!user) {
-    return <Navigate to="/login" replace />
+  // Если путь начинается не с роли пользователя — редирект
+  if (user && !location.pathname.startsWith(`/${user.role}`)) {
+    return <Navigate to={`/${user.role}`} replace />
   }
 
   return (

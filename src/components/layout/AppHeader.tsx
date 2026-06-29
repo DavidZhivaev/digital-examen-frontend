@@ -16,7 +16,7 @@ import {
   // login,
   logout,
   type Role,
-} from "@/lib/mockAuth"
+} from "@/lib/apiAuth"
 
 const navByRole: Record<Role, { to: string; label: string }[]> = {
   student: [
