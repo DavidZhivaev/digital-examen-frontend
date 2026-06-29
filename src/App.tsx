@@ -8,7 +8,6 @@ import { PlaceholderPage } from "@/components/shared/PlaceholderPage"
 import { SettingsPage } from "@/features/settings/SettingsPage"
 import { TeacherContingentPage } from "@/features/contingent/TeacherContingentPage"
 import { TeacherSeatingPage } from "@/features/seating/TeacherSeatingPage"
-import { StudentWorksPage } from "@/features/works/StudentWorksPage"
 
 function App() {
   return (
@@ -26,7 +25,7 @@ function App() {
           <Route element={<AppLayout />}>
             {/* Student */}
             <Route path="/student" element={<Navigate to="/student/works" replace />} />
-            <Route path="/student/works" element={<StudentWorksPage />} />
+            <Route path="/student/works" element={<PlaceholderPage title="Работы" />} />
             <Route path="/student/bank" element={<PlaceholderPage title="Банк задач" />} />
             <Route path="/student/settings" element={<SettingsPage />} />
 
