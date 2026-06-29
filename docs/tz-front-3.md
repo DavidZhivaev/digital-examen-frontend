@@ -117,7 +117,8 @@
   предметники (`teachers: id, ФИО, subject, groups`), `history`.
 - **Ученики:** `GET /api/classes/{class_id}/students` (`id, person_id, email,
   login, ФИО, group, must_set_password, role`). `must_set_password=true` →
-  «не заходил».
+  «не заходил». Неактивные (не зашедшие) ученики класса отдельно:
+  `GET /api/users/classes/{class_id}/inactive` (UserResponse с `is_active=false`).
 - **Что показываем:** таблица учеников (ФИО, почта, группа, статус),
   предметники, классрук. Плашка-проверка «всё ли заполнено» (скрываемая).
 - **Действия:** клик по ученику → A3; кнопки управления (классрук/оператор+) — A4.
@@ -130,7 +131,8 @@
 - **Маршрут:** модалка/панель в A2
 - **API:**
   - Создать: `POST /api/users/` (`email, role=1, class (class_id),
-    class_group, ФИО, sex?`). Новый помечен `must_set_password=true`.
+    class_group, ФИО, sex?`). Новый помечен `must_set_password=true`,
+    `is_active=false` (активируется, когда сам задаст пароль по ссылке).
   - Добавить существующего: `POST /api/classes/{class_id}/students`
     (`{user_id, group}`).
   - Сменить группу: `PATCH .../students/{user_id}/group` (`{group}`).
@@ -175,8 +177,9 @@
 - **Доступ:** учитель и выше (по коду).
 - **API:** `GET /api/users/?page=&page_size=` — PaginatedUsersResponse:
   `items[]` + `total, page, page_size, pages`. UserResponse: `id, person_id,
-  email, login, role, register_at, class_id, class_group, must_set_password,
-  ФИО, sex, email_accept, last_do`. Справочник ролей: `GET /api/users/roles`.
+  email, login, role, role_title, is_active, activated_at, register_at,
+  class_id, class_group, must_set_password, ФИО, sex, email_accept, last_do`.
+  Справочник ролей: `GET /api/users/roles`.
 - **Что показываем:** таблица всех пользователей с пагинацией, фильтр по роли.
   Кнопка «Создать персону»: `POST /api/users/` (роль ученик → выбрать класс
   и группу).
@@ -191,6 +194,8 @@
 - **API:**
   - Один: `GET /api/users/{person_id}`; Изменить: `PATCH /api/users/{person_id}`.
   - Сменить роль: `PATCH .../role` (`{role}`) — админ.
+  - Сменить подпись роли (должность): `PATCH .../role-title`
+    (`{role_title}`) — оператор+.
   - Форс-сброс пароля: `POST .../force-password-reset`.
   - Закрыть все сессии: `DELETE /api/auth/sessions/user/{user_id}`.
   - Удалить: `DELETE /api/users/{person_id}` — админ.
