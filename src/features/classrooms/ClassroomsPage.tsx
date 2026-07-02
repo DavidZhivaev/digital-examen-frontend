@@ -1,6 +1,21 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Table,
   TableBody,
@@ -17,6 +32,9 @@ const ITEMS_PER_PAGE = 8
 
 export function ClassroomsPage() {
   const [page, setPage] = useState(1)
+  const [modal, setModal] = useState<{ open: boolean; room?: RoomResponse }>({
+    open: false,
+  })
   const totalPages = Math.ceil(mockClassrooms.length / ITEMS_PER_PAGE)
   const paginated = mockClassrooms.slice(
     (page - 1) * ITEMS_PER_PAGE,
@@ -28,7 +46,7 @@ export function ClassroomsPage() {
       <PageHeader
         title="Аудитории"
         actions={
-          <Button>
+          <Button onClick={() => setModal({ open: true })}>
             <Plus className="size-4" /> Создать аудиторию
           </Button>
         }
@@ -64,10 +82,19 @@ export function ClassroomsPage() {
                 <TableCell>{r.seats_count}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="size-8">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8"
+                      onClick={() => setModal({ open: true, room: r })}
+                    >
                       <Pencil className="size-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="size-8 text-red-500">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 text-red-500"
+                    >
                       <Trash2 className="size-4" />
                     </Button>
                   </div>
@@ -116,6 +143,113 @@ export function ClassroomsPage() {
           </div>
         </div>
       )}
+
+      <RoomModal
+        open={modal.open}
+        room={modal.room}
+        onClose={() => setModal({ open: false })}
+      />
     </div>
+  )
+}
+
+function RoomModal({
+  open,
+  room,
+  onClose,
+}: {
+  open: boolean
+  room?: RoomResponse
+  onClose: () => void
+}) {
+  const isEdit = !!room
+  const [corpus, setCorpus] = useState(String(room?.corpus ?? "1"))
+  const [number, setNumber] = useState(room?.number ?? "")
+  const [rows, setRows] = useState(String(room?.rows ?? "4"))
+  const [columns, setColumns] = useState(String(room?.columns ?? "4"))
+  const [it, setIt] = useState(room?.it ?? false)
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>
+            {isEdit ? "Редактировать аудиторию" : "Создать аудиторию"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Корпус</Label>
+            <Select value={corpus} onValueChange={setCorpus}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[1, 2, 3, 4].map((c) => (
+                  <SelectItem key={c} value={String(c)}>
+                    Корпус {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Номер аудитории</Label>
+            <Input
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
+              placeholder="101"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Ряды (1–20)</Label>
+              <Input
+                type="number"
+                min={1}
+                max={20}
+                value={rows}
+                onChange={(e) => setRows(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Мест в ряду (1–20)</Label>
+              <Input
+                type="number"
+                min={1}
+                max={20}
+                value={columns}
+                onChange={(e) => setColumns(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="it-check"
+              checked={it}
+              onChange={(e) => setIt(e.target.checked)}
+              className="size-4"
+            />
+            <Label htmlFor="it-check" className="cursor-pointer">
+              IT-аудитория
+            </Label>
+          </div>
+
+          <div className="flex gap-2 justify-end pt-2">
+            <Button variant="outline" onClick={onClose}>
+              Отмена
+            </Button>
+            <Button>
+              {isEdit ? "Сохранить" : "Создать"}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
