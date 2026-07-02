@@ -45,7 +45,6 @@ import {
 } from "lucide-react"
 import { PageHeader } from "@/components/shared/PageHeader"
 import {
-  mockClass,
   mockStudents,
   mockClassTeacher,
   mockSubjectTeachers,
@@ -53,7 +52,6 @@ import {
   fioOf,
   roleNameByNum,
   type Student,
-  type ClassTeacher,
 } from "./mocks"
 
 const ITEMS_PER_PAGE = 10
@@ -92,7 +90,7 @@ export function ClassDetailPage() {
   )
 }
 
-function ClassContent({ classId, cls }: { classId: number; cls: { display_name: string } }) {
+function ClassContent({ cls }: { classId: number; cls: { display_name: string } }) {
   const [showBanner, setShowBanner] = useState(true)
   const [tab, setTab] = useState("all")
   const [selected, setSelected] = useState<Student | null>(null)

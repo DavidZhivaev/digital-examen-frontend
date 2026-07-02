@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { Plus } from "lucide-react"
-import { mockClasses, type ClassShort } from "./mocks"
+import { mockClasses } from "./mocks"
 
 export function ClassesListPage() {
   const navigate = useNavigate()
