@@ -9,6 +9,9 @@ import { SettingsPage } from "@/features/settings/SettingsPage"
 import { TeacherContingentPage } from "@/features/contingent/TeacherContingentPage"
 import { TeacherSeatingPage } from "@/features/seating/TeacherSeatingPage"
 import { ClassroomsPage } from "@/features/classrooms/ClassroomsPage"
+import { ClassesListPage } from "@/features/contingent/ClassesListPage"
+import { ClassDetailPage } from "@/features/contingent/ClassDetailPage"
+import { AllUsersPage } from "@/features/contingent/AllUsersPage"
 
 function App() {
   return (
@@ -33,6 +36,7 @@ function App() {
             {/* Teacher */}
             <Route path="/teacher" element={<Navigate to="/teacher/classes" replace />} />
             <Route path="/teacher/classes" element={<TeacherContingentPage />} />
+<Route path="/teacher/classes/:classId" element={<ClassDetailPage />} />
             <Route path="/teacher/works" element={<PlaceholderPage title="Работы" />} />
             <Route path="/teacher/seating" element={<TeacherSeatingPage />} />
             <Route path="/teacher/bank" element={<PlaceholderPage title="Банк задач" />} />
@@ -40,7 +44,8 @@ function App() {
 
             {/* Operator */}
             <Route path="/operator" element={<Navigate to="/operator/users" replace />} />
-            <Route path="/operator/users" element={<PlaceholderPage title="Контингент" />} />
+            <Route path="/operator/users" element={<ClassesListPage />} />
+<Route path="/operator/users/all" element={<AllUsersPage />} />
             <Route path="/operator/works" element={<PlaceholderPage title="Работы" />} />
             <Route path="/operator/classrooms" element={<ClassroomsPage />} />
             <Route path="/operator/seating" element={<PlaceholderPage title="Рассадка" />} />
@@ -51,7 +56,8 @@ function App() {
 
             {/* Admin */}
             <Route path="/admin" element={<Navigate to="/admin/users" replace />} />
-            <Route path="/admin/users" element={<PlaceholderPage title="Контингент" />} />
+            <Route path="/admin/users" element={<ClassesListPage />} />
+<Route path="/admin/users/all" element={<AllUsersPage />} />
             <Route path="/admin/works" element={<PlaceholderPage title="Работы" />} />
             <Route path="/admin/classrooms" element={<ClassroomsPage />} />
             <Route path="/admin/seating" element={<PlaceholderPage title="Рассадка" />} />
