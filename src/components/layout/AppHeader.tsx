@@ -31,6 +31,7 @@ const navByRole: Record<Role, { to: string; label: string }[]> = {
   ],
   operator: [
     { to: "/operator/users", label: "Контингент" },
+    { to: "/operator/users/all", label: "Пользователи" },
     { to: "/operator/works", label: "Работы" },
     { to: "/operator/classrooms", label: "Аудитории" },
     { to: "/operator/seating", label: "Рассадка" },
@@ -40,6 +41,7 @@ const navByRole: Record<Role, { to: string; label: string }[]> = {
   ],
   admin: [
     { to: "/admin/users", label: "Контингент" },
+    { to: "/admin/users/all", label: "Пользователи" },
     { to: "/admin/works", label: "Работы" },
     { to: "/admin/classrooms", label: "Аудитории" },
     { to: "/admin/seating", label: "Рассадка" },
